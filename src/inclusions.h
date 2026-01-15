@@ -37,9 +37,15 @@ inline const char *fragmentShaderSource = "#version 330 core\n"
 "out vec4 FragColor;\n"
 "in vec2 TexCoord;\n"
 "uniform sampler2D ourTexture;\n"
+"uniform int uUseTexture;\n"
+"uniform vec4 uColor;\n"
 "void main()\n"
 "{\n"
-"   FragColor = texture(ourTexture, TexCoord);\n"
+"   if(uUseTexture == 1) {\n"
+"       FragColor = texture(ourTexture, TexCoord);\n"
+"   } else {\n"
+"       FragColor = uColor;\n"
+"   }\n"
 "}\0";
 
 #endif

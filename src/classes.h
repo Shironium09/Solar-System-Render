@@ -14,7 +14,10 @@ typedef struct Object{
     u_int VAO;
     u_int VBO;
     u_int texture;
+    u_int orbitVAO;
+    u_int orbitVBO;
 
+    std::vector<float>orbitVertices;
     std::vector<float>vertices;
     std::vector<float>position = {0.0, 0.7, 0.0};   //x = center, y = slightly above, z = center (since 2d)
     std::vector<float>velocity = {0.0, 0.0};        //velocity for x and y are initially 0
@@ -113,6 +116,8 @@ typedef struct Object{
 
     void draw(){
 
+        glUniform1i(glGetUniformLocation(shader_program, "uUseTexture"), 1);
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -125,6 +130,56 @@ typedef struct Object{
 
         rotate();
         glBindVertexArray(0);
+
+    }
+
+    void initOrbit(){
+
+        if(orbit_radius > 0.0f){
+
+            float line_segments = 128;
+
+            for(int i = 0; i < line_segments; i++){
+
+                float theta = 2.0f*M_PI*float(i)/line_segments;
+
+                float x = orbit_radius*cos(theta);
+                float y = orbit_radius*sin(theta);
+
+                orbitVertices.push_back(x/ASPECT_RATIO);
+                orbitVertices.push_back(y);
+                orbitVertices.push_back(0.0f);
+                
+
+            }
+ 
+            glGenVertexArrays(1, &orbitVAO);
+            glGenBuffers(1, &orbitVBO);
+
+            glBindVertexArray(orbitVAO);
+            glBindBuffer(GL_ARRAY_BUFFER, orbitVAO);
+            glBufferData(GL_ARRAY_BUFFER, orbitVertices.size() * sizeof(float), orbitVertices.data(), GL_STATIC_DRAW);
+
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+            glEnableVertexAttribArray(0);
+
+        }
+
+    }
+
+    void drawOrbit(){
+
+        if(orbit_radius > 0.0f){
+
+            glUniform1i(glGetUniformLocation(shader_program, "uUseTexture"), 0);
+            glUniform4f(glGetUniformLocation(shader_program, "uColor"), 1.0f, 1.0f, 1.0f, 1.0f);
+            glUniform3f(glGetUniformLocation(shader_program, "uPosition"), 0.0f, 0.0f, 0.0f);
+
+            glBindVertexArray(orbitVAO);
+            glDrawArrays(GL_LINE_LOOP, 0, 128);
+            glBindVertexArray(0);
+
+        }
 
     }
 

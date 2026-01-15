@@ -16,36 +16,53 @@ int main(){
     GLFWwindow *window = startGLFW();
 
     sun.generate();
-    sun.loadTexture("src/textures/sun.png");
+    sun.loadTexture("textures/sun.png");
 
     mercury.generate();
-    mercury.loadTexture("src/textures/mercury.png");
+    mercury.loadTexture("textures/mercury.png");
+    mercury.initOrbit();
 
     venus.generate();
-    venus.loadTexture("src/textures/venus.png");
+    venus.loadTexture("textures/venus.png");
+    venus.initOrbit();
 
     earth.generate();
-    earth.loadTexture("src/textures/earth.png");
+    earth.loadTexture("textures/earth.png");
+    earth.initOrbit();
 
     mars.generate();
-    mars.loadTexture("src/textures/mars.png");
+    mars.loadTexture("textures/mars.png");
+    mars.initOrbit();
 
     jupiter.generate();
-    jupiter.loadTexture("src/textures/jupiter.png");
+    jupiter.loadTexture("textures/jupiter.png");
+    jupiter.initOrbit();
 
     saturn.generate();
-    saturn.loadTexture("src/textures/saturn.png");
+    saturn.loadTexture("textures/saturn.png");
+    saturn.initOrbit();
 
     uranus.generate();
-    uranus.loadTexture("src/textures/uranus.png");
+    uranus.loadTexture("textures/uranus.png");
+    uranus.initOrbit();
 
     neptune.generate();
-    neptune.loadTexture("src/textures/neptune.png");
+    neptune.loadTexture("textures/neptune.png");
+    neptune.initOrbit();
 
     while(!glfwWindowShouldClose(window)){
 
-        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        mercury.drawOrbit();
+        venus.drawOrbit();
+        earth.drawOrbit();
+        mars.drawOrbit();
+        jupiter.drawOrbit();
+        saturn.drawOrbit();
+        uranus.drawOrbit();
+        neptune.drawOrbit();
 
         sun.draw();
         mercury.draw();
