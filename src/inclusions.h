@@ -6,10 +6,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <cmath>
+#include <random>
 
 #define M_PI 3.14159265358979323846
 #define SCREEN_WIDTH 1200.0f
 #define SCREEN_HEIGHT 1000.0f
+#define NUM_STARS 300
 
 typedef unsigned int u_int;
 typedef unsigned char u_char;

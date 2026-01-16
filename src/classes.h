@@ -6,8 +6,96 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <cmath>
+#include <random>
 #include "inclusions.h"
 #include "stb_image.h"
+
+typedef struct Starfield{
+
+    u_int VAO;
+    u_int VBO;
+
+    int total_vertex_count = 0;
+
+    void initStars(u_int shaderProgram){
+
+        std::vector<float>batch_vertices;
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
+        std::uniform_real_distribution<float> position_dist(-1.0f, 1.0f);
+        std::uniform_real_distribution<float> radius_dist(0.002f, 0.005f);
+
+        for(int i = 0; i < NUM_STARS; i++){
+
+            float cx = position_dist(gen);
+            float cy = position_dist(gen);
+            float z = 0.0f;
+            float radius = radius_dist(gen);
+            int segments = 8;
+
+            for(int j = 0; j < segments; j++){
+
+                float angle1 = 2.0f*M_PI*j/segments;
+                float angle2 = 2.0f*M_PI*(j+1)/segments;
+
+                batch_vertices.push_back(cx);
+                batch_vertices.push_back(cy);
+                batch_vertices.push_back(z);
+
+                batch_vertices.push_back(cx + cos(angle1) * radius);
+                batch_vertices.push_back(cy + sin(angle1) * radius);
+                batch_vertices.push_back(z);
+
+                batch_vertices.push_back(cx + cos(angle2) * radius);
+                batch_vertices.push_back(cy + sin(angle2) * radius);
+                batch_vertices.push_back(z);
+
+            }
+
+        }
+
+        total_vertex_count = batch_vertices.size() / 3;
+
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, batch_vertices.size() * sizeof(float), batch_vertices.data(), GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        
+        glBindBuffer(GL_ARRAY_BUFFER, 0); 
+        glBindVertexArray(0);
+
+    }
+
+    void draw(u_int shaderProgram){
+
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+
+        glUniform1i(glGetUniformLocation(shaderProgram, "uUseTexture"), 0);
+
+        glUniform4f(glGetUniformLocation(shaderProgram, "uColor"), 0.5f, 0.5f, 0.5f, 0.35f);
+
+        int posLoc = glGetUniformLocation(shaderProgram, "uPosition");
+        
+        if(posLoc != -1){
+
+            glUniform3f(posLoc, 0.0f, 0.0f, 0.0f);
+        
+        }
+
+        glDrawArrays(GL_TRIANGLES, 0, total_vertex_count);
+        
+        glBindVertexArray(0);
+    }
+
+} Starfield;
 
 typedef struct Object{
 
@@ -172,10 +260,12 @@ typedef struct Object{
         if(orbit_radius > 0.0f){
 
             glUniform1i(glGetUniformLocation(shader_program, "uUseTexture"), 0);
-            glUniform4f(glGetUniformLocation(shader_program, "uColor"), 1.0f, 1.0f, 1.0f, 1.0f);
+            glUniform4f(glGetUniformLocation(shader_program, "uColor"), 0.5f, 0.5f, 0.5f, 0.35f);
             glUniform3f(glGetUniformLocation(shader_program, "uPosition"), 0.0f, 0.0f, 0.0f);
 
             glBindVertexArray(orbitVAO);
+            glLineWidth(1.0f);
+
             glDrawArrays(GL_LINE_LOOP, 0, 128);
             glBindVertexArray(0);
 

@@ -1,4 +1,5 @@
 #include "planets.h"
+#include "functions.h"
 #include "texture_loader.cpp"
 
 Planet sun = Sun();
@@ -10,6 +11,7 @@ Planet jupiter = Jupiter();
 Planet saturn = Saturn();
 Planet uranus = Uranus();
 Planet neptune = Neptune();
+Starfield stars;
 
 int main(){
 
@@ -50,10 +52,14 @@ int main(){
     neptune.loadTexture("textures/neptune.png");
     neptune.initOrbit();
 
+    stars.initStars(shader_program);
+
     while(!glfwWindowShouldClose(window)){
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        stars.draw(shader_program);
 
         mercury.drawOrbit();
         venus.drawOrbit();
